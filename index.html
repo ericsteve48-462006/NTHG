@@ -1,0 +1,1763 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NTHG — everyday apps, essentially</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Ccircle cx='20' cy='20' r='16' fill='%23191e23' stroke='%23e3a23c' stroke-width='3'/%3E%3Ccircle cx='20' cy='7' r='3' fill='%23e3a23c'/%3E%3Cline x1='20' y1='20' x2='20' y2='9' stroke='%23e3a23c' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --plastic: #8fb8ac;
+    --plastic-dark: #4f7268;
+    --plastic-light: #b7d6cc;
+    --bg-page: #12161a;
+    --bg-panel: #191e23;
+    --mustard: #e3a23c;
+    --mustard-dark: #b87e28;
+    --alert: #d1495b;
+    --ink: #202422;
+    --paper: #f2ede0;
+    --dim: #8a9089;
+    --muted: #98a39f;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg-page);
+    color: var(--paper);
+    font-family: 'IBM Plex Mono', monospace;
+    line-height: 1.6;
+  }
+  body::before{
+    content:"";
+    position: fixed; inset: 0;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(143,184,172,0.08), transparent 45%),
+      radial-gradient(circle at 85% 90%, rgba(227,162,60,0.06), transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  a { color: inherit; }
+
+  /* ---------- NAV ---------- */
+  nav {
+    position: sticky; top: 0; z-index: 40;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 40px;
+    background: rgba(18,22,26,0.85);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .brand {
+    display: flex; align-items: center; gap: 9px;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 800;
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: var(--plastic-light);
+  }
+  .brand-mark { width: 26px; height: 26px; flex-shrink: 0; }
+  .brand-mark .ring { fill: none; stroke: var(--mustard); stroke-width: 3; }
+  .brand-mark .needle { stroke: var(--mustard); stroke-width: 2; stroke-linecap: round; }
+  .brand-mark .dot { fill: var(--mustard); }
+  .footer-mark { width: 16px; height: 16px; vertical-align: -3px; margin-right: 6px; opacity: 0.8; }
+  .nav-links {
+    display: flex; align-items: center; gap: 34px;
+    font-size: 14px;
+    color: var(--dim);
+  }
+  .nav-links a { text-decoration: none; transition: color 0.15s ease; }
+  .nav-links a:hover { color: var(--paper); }
+  .nav-download {
+    background: none;
+    border: 1px solid var(--mustard);
+    color: var(--mustard);
+    padding: 8px 18px;
+    border-radius: 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .nav-download:hover { background: var(--mustard); color: #201405; }
+
+  /* ---------- LANDING & HERO ---------- */
+  .landing-view { position: relative; z-index: 1; }
+  .hero {
+    max-width: 780px;
+    margin: 0 auto;
+    padding: 90px 32px 60px;
+    text-align: left;
+  }
+  .hero .eyebrow-mark {
+    font-size: 13px;
+    color: var(--mustard);
+    margin-bottom: 14px;
+    letter-spacing: 2px;
+  }
+  .hero h1 {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 800;
+    font-size: clamp(42px, 7vw, 64px);
+    line-height: 1.15;
+    margin: 0 0 22px;
+    color: var(--paper);
+    max-width: 620px;
+  }
+  .hero p {
+    font-size: 15px;
+    color: #cfd3ca;
+    max-width: 62ch;
+    margin: 0 0 30px;
+    line-height: 1.7;
+  }
+  .hero-cta {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--mustard);
+    color: #201405;
+    border: none;
+    padding: 13px 26px;
+    border-radius: 26px;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+  }
+  .hero-cta:hover { background: #f0b158; }
+
+  section.content-section { position: relative; z-index: 1; padding: 50px 32px; max-width: 980px; margin: 0 auto; }
+  .section-title {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 26px;
+    margin-bottom: 8px;
+    color: var(--paper);
+  }
+  .section-sub { color: var(--dim); font-size: 13px; margin-bottom: 32px; }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 16px;
+  }
+  .feature-card {
+    background: var(--bg-panel);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 16px;
+    padding: 20px 18px;
+  }
+  .feature-card .icon {
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px;
+    margin-bottom: 14px;
+    border: none;
+  }
+  .feature-card.f1 .icon { background: linear-gradient(160deg, #f0d9a8, var(--mustard)); color: #201405; }
+  .feature-card.f2 .icon { background: linear-gradient(160deg, #f3ece0, #d8ccb3); color: #201405; }
+  .feature-card.f3 .icon { background: linear-gradient(160deg, #6b8fd6, #33478f); color: #fff; }
+  .feature-card.f4 .icon { background: linear-gradient(160deg, #e88a9a, var(--alert)); color: #fff; }
+  .feature-card h3 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 16px;
+    margin: 0 0 6px;
+    color: var(--paper);
+  }
+  .feature-card p { font-size: 12.5px; color: var(--dim); margin: 0; }
+
+  .notes-list { display: flex; flex-direction: column; gap: 22px; }
+  .note-entry {
+    background: var(--bg-panel);
+    border-left: 3px solid var(--plastic);
+    border-radius: 8px;
+    padding: 16px 20px;
+  }
+  .note-entry .ver {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--plastic-light);
+    margin-bottom: 8px;
+  }
+  .note-entry ul { margin: 0; padding-left: 18px; font-size: 12.5px; color: #c3c7bd; }
+  .note-entry li { margin-bottom: 4px; }
+
+  footer {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 40px 20px 60px;
+    font-size: 11px;
+    color: var(--dim);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    margin-top: 40px;
+  }
+
+  /* ---------- APP SUITE INTERFACE CONTAINER ---------- */
+  #app-suite-container {
+    display: none;
+    position: relative;
+    z-index: 1;
+    width: min(1180px, 90vw);
+    margin: 0 auto;
+    padding: 35px 0 80px;
+  }
+  .suite-header-bar {
+    display: flex; justify-content: space-between; align-items: center; gap: 20px;
+    margin-bottom: 35px;
+    border-bottom: 2px solid var(--plastic);
+    padding-bottom: 15px;
+  }
+  .suite-logo {
+    font-family: "Baloo 2", sans-serif; font-size: 26px; font-weight: 800;
+    color: var(--plastic-light); letter-spacing: 1px;
+  }
+  .suite-badge {
+    border: 1px solid var(--mustard); color: var(--mustard);
+    padding: 6px 12px; font-size: 11px; letter-spacing: 1px; border-radius: 4px;
+  }
+  .apps-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 18px;
+  }
+  .app-card {
+    background: var(--bg-panel); border: 2px solid #30383e;
+    min-height: 230px; padding: 22px; display: flex; flex-direction: column;
+    transition: transform 0.18s ease, border-color 0.18s ease; position: relative;
+    border-radius: 8px;
+  }
+  .app-card:hover { transform: translateY(-4px); border-color: var(--plastic); }
+  .app-card h2 {
+    font-family: "Baloo 2", sans-serif; margin: 8px 0; font-size: 24px; color: var(--paper);
+  }
+  .app-card .icon-box {
+    width: 48px; height: 48px; display: grid; place-items: center;
+    border: 2px solid var(--plastic); font-size: 22px; background: rgba(143,184,172,0.1);
+  }
+  .app-card .desc { font-size: 12px; color: var(--muted); line-height: 1.6; flex: 1; margin: 8px 0 16px; }
+  
+  .app-card button, .view button {
+    font-family: inherit; cursor: pointer; border: 2px solid var(--paper);
+    background: var(--plastic); color: var(--ink); font-weight: 600;
+    padding: 10px 14px; border-radius: 4px; transition: background 0.15s ease;
+  }
+  .app-card button:hover, .view button:hover { background: var(--plastic-light); }
+  .view button.secondary { background: transparent; color: var(--paper); border-color: #59636a; }
+  .view button.secondary:hover { background: rgba(255,255,255,0.08); }
+  
+  .app-card.game button { cursor: pointer; opacity: 1; background: var(--alert); color: #fff; border-color: #a8323e; }
+  .app-card.game button:hover { background: #e35565; }
+
+  /* App Views */
+  .view {
+    display: none; margin-top: 25px; background: var(--bg-panel);
+    border: 2px solid var(--plastic); padding: 30px; border-radius: 12px;
+  }
+  .view.active { display: block; }
+  .view h2 { font-family: "Baloo 2", sans-serif; font-size: 30px; margin-top: 0; color: var(--paper); }
+  .back { margin-bottom: 20px; }
+
+  /* Calendar, Clock Views */
+  .calendar-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; text-align: center; margin-top: 15px;
+  }
+  .day-header, .date-cell { padding: 12px 4px; border: 1px solid #30383e; font-size: 13px; border-radius: 4px; }
+  .day-header { color: var(--mustard); font-weight: bold; background: rgba(227,162,60,0.05); }
+  .date-cell { background: #12161a; color: var(--muted); }
+  .date-cell.today { border-color: var(--mustard); color: var(--mustard); font-weight: bold; }
+
+  /* Perpetual Almost Clock Styles */
+  .clock-container {
+    background: #121218;
+    border: 2px solid #2a2a38;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 440px;
+    margin: 0 auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+    text-align: center;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .clock-container h3 {
+    margin-top: 0;
+    color: #f59e0b;
+    font-size: 1.1rem;
+    letter-spacing: 2px;
+    font-family: 'Baloo 2', sans-serif;
+  }
+  .display-box {
+    background: #000;
+    border: 1px solid #3b3b4f;
+    border-radius: 6px;
+    padding: 20px;
+    font-size: 2rem;
+    color: #fbbf24;
+    margin-bottom: 20px;
+    letter-spacing: 3px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    margin-bottom: 20px;
+    color: #9ca3af;
+  }
+  .pulse-dot {
+    height: 10px;
+    width: 10px;
+    background-color: #10b981;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 8px #10b981;
+    animation: pulse 1.5s infinite;
+  }
+  @keyframes pulse {
+    0% { opacity: 0.3; }
+    50% { opacity: 1; }
+    100% { opacity: 0.3; }
+  }
+  .controls-section {
+    border-top: 1px solid #2a2a38;
+    padding-top: 15px;
+    text-align: left;
+    font-size: 0.85rem;
+  }
+  .control-group {
+    margin-bottom: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .clock-container input, .clock-container button {
+    background: #1f1f2e;
+    border: 1px solid #3b3b4f;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-family: inherit;
+  }
+  .clock-container button {
+    cursor: pointer;
+    background: #374151;
+  }
+  .clock-container button:hover {
+    background: #4b5563;
+  }
+  .error-msg {
+    color: #ef4444;
+    font-size: 0.75rem;
+    height: 15px;
+    margin-top: 4px;
+  }
+
+  /* Click Me. Please. Game Integration Styles */
+  .game-arena-wrapper {
+    position: relative;
+    width: 100%;
+    height: 480px;
+    background: #1a1a1a;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid #30383e;
+  }
+  #arena {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+  #hud {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    right: 0;
+    text-align: center;
+    z-index: 5;
+    pointer-events: none;
+  }
+  #hud h1 {
+    font-size: 18px;
+    margin: 0 0 4px;
+    letter-spacing: -0.01em;
+    color: #f1f1f1;
+    font-family: inherit;
+  }
+  #hud p {
+    margin: 0;
+    font-size: 13px;
+    color: #999;
+  }
+  #stats {
+    display: flex;
+    justify-content: center;
+    gap: 28px;
+    margin-top: 10px;
+    font-size: 13px;
+    color: #bbb;
+  }
+  #stats b {
+    display: block;
+    font-size: 20px;
+    color: #e63946;
+  }
+  #btn {
+    position: absolute;
+    padding: 18px 34px;
+    font-size: 17px;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(180deg, #e63946, #c1121f);
+    border: none;
+    border-radius: 999px;
+    box-shadow: 0 6px 0 #8c0f18, 0 10px 18px rgba(0,0,0,0.4);
+    cursor: pointer;
+    user-select: none;
+    transition: left 0.012s linear, top 0.012s linear, transform 0.1s;
+    white-space: nowrap;
+    z-index: 3;
+    font-family: inherit;
+  }
+  #btn:active { transform: scale(0.96); }
+  #btn.rage {
+    transition: left 0.006s linear, top 0.006s linear;
+  }
+  #btn.feint {
+    transition: left 0.02s ease-out, top 0.02s ease-out;
+  }
+  #caught {
+    position: absolute;
+    inset: 0;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background: rgba(0,0,0,0.85);
+    z-index: 10;
+    text-align: center;
+  }
+  #caught h2 {
+    font-size: 32px;
+    margin-bottom: 8px;
+    font-family: 'Baloo 2', sans-serif;
+    color: #f1f1f1;
+  }
+  #caught p {
+    color: #aaa;
+    margin-bottom: 24px;
+  }
+  #caught button {
+    background: #e63946;
+    color: white;
+    border: none;
+    padding: 12px 26px;
+    border-radius: 999px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  .taunt {
+    position: absolute;
+    bottom: 30px;
+    font-size: 22px;
+    font-weight: 700;
+    color: #e63946;
+    white-space: nowrap;
+    text-shadow: 0 2px 6px rgba(0,0,0,0.5);
+    pointer-events: none;
+    animation: floatUp 1.6s ease-out forwards;
+    z-index: 6;
+  }
+  @keyframes floatUp {
+    0%   { opacity: 1; transform: translate(0, 0); }
+    55%  { opacity: 1; transform: translate(28vw, -180px); }
+    100% { opacity: 0; transform: translate(35vw, -260px); }
+  }
+
+  /* ---------- OPUS 1921 CABLE MODEL C CALCULATOR STYLING ---------- */
+  .opus-calc-chassis {
+    background: #1a1510;
+    border: 4px solid #3b2e21;
+    border-radius: 14px;
+    padding: 24px;
+    max-width: 680px;
+    margin: 0 auto;
+    box-shadow: inset 0 3px 10px rgba(0,0,0,0.8), 0 10px 30px rgba(0,0,0,0.5);
+  }
+  .opus-window-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #2b2219;
+    border: 2px solid #4a3a29;
+    padding: 8px 14px;
+    border-radius: 6px;
+    margin-bottom: 18px;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .opus-title {
+    font-family: 'Baloo 2', sans-serif;
+    color: #e3a23c;
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+  .opus-win-controls {
+    display: flex;
+    gap: 8px;
+  }
+  .opus-win-btn {
+    background: #15110d;
+    border: 1px solid #574330;
+    color: #c9b49e;
+    width: 28px;
+    height: 28px;
+    display: grid;
+    place-items: center;
+    font-weight: bold;
+    font-size: 13px;
+    border-radius: 3px;
+    cursor: pointer;
+    user-select: none;
+    transition: background 0.1s;
+  }
+  .opus-win-btn:hover { background: #33281e; }
+  
+  .opus-display {
+    width: 100%;
+    padding: 16px;
+    background: #0d0a08;
+    color: #e3a23c;
+    border: 2px inset #2e241c;
+    font-size: 24px;
+    text-align: right;
+    margin-bottom: 18px;
+    font-family: 'IBM Plex Mono', monospace;
+    border-radius: 4px;
+    min-height: 65px;
+    word-break: break-all;
+  }
+  .opus-deck-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .opus-panel-box {
+    background: #14100c;
+    border: 2px solid #2d2319;
+    padding: 14px;
+    border-radius: 8px;
+  }
+  .opus-panel-title {
+    font-size: 11px;
+    color: #8c765f;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    border-bottom: 1px dashed #362c21;
+    padding-bottom: 4px;
+  }
+  
+  /* Rotary Model C Numeric Dial Grid */
+  .opus-rotary-dial-container {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin: 0 auto;
+    touch-action: none;
+    user-select: none;
+  }
+  .opus-dial-plate {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    transform-origin: center;
+    background: radial-gradient(circle, #241c14 30%, #15100c 90%);
+    border: 4px solid #4a3828;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.7);
+  }
+  .opus-finger-stop {
+    position: absolute;
+    top: 10px;
+    right: 25px;
+    width: 14px;
+    height: 32px;
+    background: #594633;
+    border: 2px solid #7d6145;
+    border-radius: 3px;
+    z-index: 5;
+    pointer-events: none;
+  }
+  .opus-dial-center {
+    position: absolute;
+    inset: 60px;
+    border-radius: 50%;
+    background: #120d0a;
+    border: 3px solid #36291d;
+    display: grid;
+    place-items: center;
+    text-align: center;
+    z-index: 4;
+  }
+  .opus-dial-center-text {
+    font-size: 9px;
+    color: #8c765f;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  .opus-dial-hole {
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #f2ede0;
+    border: 2px solid #574330;
+    display: grid;
+    place-items: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 700;
+    font-size: 14px;
+    color: #1a1510;
+    cursor: grab;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.4);
+    transform: translate(-50%, -50%);
+  }
+  .opus-dial-hole:active { cursor: grabbing; }
+
+  .opus-grid-algebra {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+  }
+  .opus-key {
+    background: #272018;
+    color: #ebdacf;
+    border: 2px outset #47392d;
+    padding: 14px 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-weight: 600;
+    font-size: 15px;
+    text-align: center;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: transform 0.05s, background 0.1s;
+  }
+  .opus-key:active {
+    border-style: inset;
+    transform: translateY(2px);
+  }
+  .opus-key.algebra-tool {
+    background: #362817;
+    color: #e3a23c;
+    border-color: #59442a;
+    font-size: 13px;
+  }
+  .opus-key.equals-key {
+    background: #4a3319;
+    color: #ffcc66;
+    border-color: #7d572b;
+    grid-column: span 2;
+  }
+
+  /* Teleporting X button behavior */
+  #teleportXBtn {
+    position: relative;
+  }
+
+  /* ---------- MODAL OVERLAY (Rotary Terms) ---------- */
+  .overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(5,6,7,0.86);
+    z-index: 100;
+    align-items: center; justify-content: center;
+    padding: 24px;
+  }
+  .overlay.show { display: flex; }
+
+  .phone-modal {
+    width: 100%;
+    max-width: 620px;
+    max-height: 92vh;
+    background: linear-gradient(160deg, #3a2c22, #1c130e);
+    border-radius: 20px;
+    padding: 22px;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.6), inset 0 2px 3px rgba(255,255,255,0.08);
+    display: flex; flex-direction: column;
+    gap: 14px;
+  }
+  .phone-modal-head {
+    display: flex; align-items: center; justify-content: space-between;
+    color: #e8d9c4;
+  }
+  .phone-modal-head .ph-title {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 16px;
+  }
+  .phone-modal-head .ph-sub { font-size: 11px; color: #a99884; }
+
+  .dial-row {
+    display: flex; gap: 18px; align-items: center;
+    background: #120d0a;
+    border-radius: 14px;
+    padding: 16px;
+  }
+  .dial-wrap {
+    position: relative;
+    width: 130px; height: 130px;
+    flex-shrink: 0;
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+  }
+  .dial-wrap.dragging { cursor: grabbing; }
+  .dial-plate {
+    width: 100%; height: 100%;
+    border-radius: 50%;
+    transform-origin: center;
+  }
+  .dial-center-label {
+    position: absolute; inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    flex-direction: column;
+    pointer-events: none;
+  }
+  .dial-pct {
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 800;
+    font-size: 20px;
+    color: var(--mustard);
+  }
+  .dial-caption { font-size: 9px; color: #a99884; margin-top: 2px; letter-spacing: 0.5px; }
+
+  .dial-side {
+    flex: 1;
+    font-size: 11px;
+    color: #cbb9a1;
+  }
+  .lang-select {
+    width: 100%;
+    background: #241a13;
+    color: #e8d9c4;
+    border: 1px solid #4a3a2a;
+    border-radius: 8px;
+    padding: 8px 10px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  .dial-hint { color: #8a7561; font-size: 10.5px; }
+
+  .terms-panel {
+    background: #f2ede0;
+    color: #2c2620;
+    border-radius: 12px;
+    padding: 18px 20px;
+    height: 260px;
+    overflow-y: scroll;
+    font-size: 12.5px;
+    line-height: 1.65;
+  }
+  .terms-panel h4 {
+    font-family: 'Baloo 2', sans-serif;
+    font-size: 14px;
+    margin: 18px 0 6px;
+  }
+  .terms-panel h4:first-child { margin-top: 0; }
+  .terms-panel p { margin: 0 0 12px; }
+  .terms-panel .insult {
+    background: #e9dcc4;
+    border-left: 3px solid var(--alert);
+    padding: 8px 10px;
+    border-radius: 6px;
+    font-style: italic;
+  }
+
+  .phone-modal-actions {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  }
+  .progress-note { font-size: 10.5px; color: #a99884; flex: 1; }
+  .btn-row { display: flex; gap: 10px; }
+  .btn-agree, .btn-disagree {
+    border: none; border-radius: 20px;
+    padding: 10px 20px;
+    font-family: 'Baloo 2', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    cursor: not-allowed;
+    opacity: 0.4;
+    transition: opacity 0.2s ease;
+  }
+  .btn-agree { background: var(--plastic); color: #16241f; }
+  .btn-disagree { background: var(--alert); color: #fff; }
+  .phone-modal-actions.unlocked .btn-agree,
+  .phone-modal-actions.unlocked .btn-disagree {
+    cursor: pointer; opacity: 1;
+  }
+
+  @media (max-width: 560px) {
+    .dial-row { flex-direction: column; }
+    nav { padding: 14px 18px; }
+    .nav-links { gap: 16px; font-size: 12px; }
+    .hero h1 { font-size: 32px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAVIGATION -->
+<nav>
+  <div class="brand">
+    <svg class="brand-mark" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+      <circle class="ring" cx="20" cy="20" r="16"/>
+      <line class="needle" x1="20" y1="20" x2="20" y2="9"/>
+      <circle class="dot" cx="20" cy="7" r="3"/>
+    </svg>
+    NTHG
+  </div>
+  <div class="nav-links">
+    <a href="#features">Features</a>
+    <a href="#release-notes">Release notes</a>
+  </div>
+  <button class="nav-download" onclick="openTerms()" title="Download Essential+">( Download )</button>
+</nav>
+
+<!-- LANDING VIEW -->
+<div id="landing-view" class="landing-view">
+  <div class="hero">
+    <div class="eyebrow-mark">everyday apps, essentially</div>
+    <h1>The essentials, and nothing you didn't ask for.</h1>
+    <p>
+      Everyday apps are supposed to disappear into your routine — the calculator you reach for without thinking,
+      the calendar you glance at once a morning. Somewhere along the way, apps like these picked up features
+      nobody asked for: accounts, subscriptions, notifications about notifications. NTHG goes back to the actual
+      problem — you needed small tools, not small platforms — and ships exactly that as <strong>Essential+</strong>.
+      No bloat, no upsell, no account wall. Just the essentials, doing the essential, unglamorous work they were built for.
+    </p>
+    <button class="hero-cta" onclick="openTerms()">Download Essential+</button>
+  </div>
+
+  <section id="features" class="content-section">
+    <div class="section-title">Features</div>
+    <div class="section-sub">everything in Essential+ — four apps, one download, zero surprises (mostly)</div>
+    <div class="feature-grid">
+      <div class="feature-card f1">
+        <div class="icon">🧮</div>
+        <h3>Calculator</h3>
+        <p>Handles your everyday math, with opinions.</p>
+      </div>
+      <div class="feature-card f2">
+        <div class="icon">📅</div>
+        <h3>Calendar</h3>
+        <p>Keeps track of dates. Doesn't do the remembering for you.</p>
+      </div>
+      <div class="feature-card f3">
+        <div class="icon">🕐</div>
+        <h3>Clock</h3>
+        <p>World times, an alarm, a countdown. One honest entry.</p>
+      </div>
+      <div class="feature-card f4">
+        <div class="icon">🎯</div>
+        <h3>Click Me. Please.</h3>
+        <p>A single red button that refuses to be clicked.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="release-notes" class="content-section">
+    <div class="section-title">Release notes</div>
+    <div class="section-sub">what changed in Essential+, allegedly</div>
+    <div class="notes-list">
+      <div class="note-entry">
+        <div class="ver">v0.4 — current</div>
+        <ul>
+          <li>Removed the flashlight. Turns out phones already have one, and ours mostly just made people question their screen brightness.</li>
+          <li>Calendar now starts the week on Monday, like it should</li>
+          <li>Clock's world list includes one entry that tells the actual time</li>
+        </ul>
+      </div>
+      <div class="note-entry">
+        <div class="ver">v0.3</div>
+        <ul>
+          <li>Replaced the idle clicker with a self-aware dodging button that humiliates users.</li>
+          <li>Calculator's clear button became noticeably harder to catch</li>
+        </ul>
+      </div>
+      <div class="note-entry">
+        <div class="ver">v0.1</div>
+        <ul>
+          <li>Initial release of the essential suite</li>
+          <li>Alarm can be set. It will not go off. This is intentional.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <svg class="footer-mark" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="20" r="16" fill="none" stroke="#e3a23c" stroke-width="3"/>
+      <line x1="20" y1="20" x2="20" y2="9" stroke="#e3a23c" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="20" cy="7" r="3" fill="#e3a23c"/>
+    </svg>NTHG builds Essential+ &middot; four essential apps &middot; nothing more, occasionally less
+  </footer>
+</div>
+
+<!-- APP SUITE INTERFACE CONTAINER -->
+<div id="app-suite-container">
+  <div class="suite-header-bar">
+    <div class="suite-logo">NTHG</div>
+    <div class="suite-badge">ESSENTIAL+ // INTERFACE</div>
+  </div>
+
+  <main>
+    <section class="hero" style="padding: 20px 0 40px;">
+      <div class="kicker">WELCOME TO THE ACTUAL PRODUCT</div>
+      <h1>Four useful things.<br>Mostly.</h1>
+      <p>Essential+ is the tiny everyday-app suite. Calculator, calendar, clock, and the Click Me. Please. challenge. No unnecessary complexity. Probably.</p>
+    </section>
+
+    <section class="apps-grid" id="apps-grid-view">
+      <article class="app-card">
+        <div class="icon-box">＋</div>
+        <h2>Calculator</h2>
+        <p class="desc">A calculator that does the calculator thing.</p>
+        <button onclick="openView('calculator')">OPEN CALCULATOR</button>
+      </article>
+      <article class="app-card">
+        <div class="icon-box">▦</div>
+        <h2>Calendar</h2>
+        <p class="desc">See today, this month, and the dates you forgot about.</p>
+        <button onclick="openView('calendar')">OPEN CALENDAR</button>
+      </article>
+      <article class="app-card">
+        <div class="icon-box">◷</div>
+        <h2>Clock</h2>
+        <p class="desc">The current time, displayed with unreasonable confidence.</p>
+        <button onclick="openView('clock')">OPEN CLOCK</button>
+      </article>
+      <article class="app-card game">
+        <div class="icon-box">🎯</div>
+        <h2>Click Me. Please.</h2>
+        <p class="desc">A single red button that has made a personal decision never to be clicked.</p>
+        <button onclick="openView('game')">OPEN GAME</button>
+      </article>
+    </section>
+
+    <!-- OPUS 1921 CABLE MODEL C CALCULATOR VIEW -->
+    <section id="calculator" class="view">
+      <button class="secondary back" onclick="closeViews()">← BACK TO APPS</button>
+      
+      <div class="opus-calc-chassis">
+        <div class="opus-window-bar">
+          <div class="opus-title">OPUS 1921 CABLE MODEL C</div>
+          <div class="opus-win-controls">
+            <div class="opus-win-btn" onclick="triggerMinusAction()" title="Minimize / Quit">-</div>
+            <div class="opus-win-btn" onclick="triggerMaximizeAction()" title="Maximize">□</div>
+            <div class="opus-win-btn" id="teleportXBtn" onclick="triggerTeleportAction(event)" title="Close">X</div>
+          </div>
+        </div>
+
+        <div id="calcDisplay" class="opus-display">0</div>
+
+        <div class="opus-deck-layout">
+          <!-- Rotary Number Dial Deck (Model C) -->
+          <div class="opus-panel-box" style="text-align: center;">
+            <div class="opus-panel-title">Rotary Input Keypad</div>
+            <div class="opus-rotary-dial-container" id="calcDialContainer">
+              <div class="opus-finger-stop"></div>
+              <div class="opus-dial-plate" id="calcDialPlate">
+                <div class="opus-dial-center">
+                  <div class="opus-dial-center-text">MODEL C<br>DIAL</div>
+                </div>
+              </div>
+            </div>
+            <div style="font-size: 10px; color: var(--muted); margin-top: 8px;">Click &amp; pull digit to the stop</div>
+          </div>
+
+          <!-- Algebra Tools Deck -->
+          <div class="opus-panel-box">
+            <div class="opus-panel-title">Algebra Tools</div>
+            <div class="opus-grid-algebra">
+              <button class="opus-key algebra-tool" onclick="calcAdd('+')">+</button>
+              <button class="opus-key algebra-tool" onclick="calcAdd('-')">−</button>
+              <button class="opus-key algebra-tool" onclick="calcAdd('*')">×</button>
+              <button class="opus-key algebra-tool" onclick="calcAdd('/')">÷</button>
+              <button class="opus-key algebra-tool" onclick="calcClear()">CLR</button>
+              <button class="opus-key algebra-tool" onclick="calcAdd('x')">x</button>
+              <button class="opus-key equals-key" onclick="calcCompute()">=</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CALENDAR VIEW -->
+    <section id="calendar" class="view">
+      <button class="secondary back" onclick="closeViews()">← BACK TO APPS</button>
+      <h2>Calendar</h2>
+      <div id="calendarMonthTitle" style="font-family:'Baloo 2',sans-serif; font-size: 20px; color: var(--mustard); margin-bottom: 15px;"></div>
+      <div class="calendar-grid">
+        <div class="day-header">Mon</div>
+        <div class="day-header">Tue</div>
+        <div class="day-header">Wed</div>
+        <div class="day-header">Thu</div>
+        <div class="day-header">Fri</div>
+        <div class="day-header">Sat</div>
+        <div class="day-header">Sun</div>
+      </div>
+      <div id="calendarDatesGrid" class="calendar-grid" style="margin-top: 6px;"></div>
+    </section>
+
+    <!-- CLOCK VIEW (PERPETUAL ALMOST) -->
+    <section id="clock" class="view">
+      <button class="secondary back" onclick="closeViews()">← BACK TO APPS</button>
+      <h2>Clock</h2>
+      
+      <div class="clock-container" style="margin-top: 20px;">
+        <h3>PERPETUAL ALMOST</h3>
+        
+        <!-- Random World / Roman Time Display -->
+        <div class="display-box" id="timeDisplay">00:00:00</div>
+        
+        <div class="status-row">
+          <span>System Status: <strong style="color: #10b981;">ACTIVE</strong></span>
+          <div><span class="pulse-dot"></span></div>
+        </div>
+
+        <div class="controls-section">
+          <!-- Mute Alarm Setup -->
+          <div class="control-group">
+            <label for="alarmInput">Set Mute Alarm:</label>
+            <div>
+              <input type="time" id="alarmInput" value="07:00">
+              <button onclick="setAlarm()">Arm</button>
+            </div>
+          </div>
+          <div id="alarmStatus" style="font-size: 0.75rem; color: #9ca3af; margin-bottom: 10px;">Alarm unarmed (Zero Sound Guaranteed)</div>
+
+          <!-- Countdown Timer -->
+          <div class="control-group">
+            <label for="timerInput">Countdown Target (Sec):</label>
+            <div>
+              <input type="number" id="timerInput" value="60" style="width: 50px;" oninput="validateCountdown()">
+              <button onclick="startTimer()">Start</button>
+            </div>
+          </div>
+          <div class="error-msg" id="timerError"></div>
+          <div id="timerDisplay" style="text-align: center; font-size: 1.3rem; font-family: 'IBM Plex Mono', monospace; color: #60a5fa; margin-top: 5px;">Timer: 0060</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLICK ME. PLEASE. GAME VIEW -->
+    <section id="game" class="view">
+      <button class="secondary back" onclick="closeViews()">← BACK TO APPS</button>
+      <h2>Click Me. Please.</h2>
+      <div class="game-arena-wrapper">
+        <div id="arena">
+          <div id="hud">
+            <h1>🔴 Click Me. Please.</h1>
+            <p>It's just a button. How hard can it be.</p>
+            <div id="stats">
+              <div>Attempts<b id="attempts">0</b></div>
+              <div>Time elapsed<b id="timer">0s</b></div>
+              <div>Rage level<b id="rage">0</b></div>
+            </div>
+          </div>
+          <button id="btn">Click Me</button>
+          <div id="caught">
+            <h2>😮 You actually caught it</h2>
+            <p id="caughtStats"></p>
+            <button onclick="resetGame()">Torture me again</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer style="border-top: 1px solid #30383e; padding: 25px 0; color: var(--muted); font-size: 11px; text-align: center; margin-top: 60px;">
+    NTHG builds Essential+ &middot; four essential apps &middot; nothing more, occasionally less
+  </footer>
+</div>
+
+<!-- ROTARY TERMS MODAL -->
+<div class="overlay" id="terms-overlay">
+  <div class="phone-modal">
+    <div class="phone-modal-head">
+      <div>
+        <div class="ph-title">Essential+ Terms &amp; Conditions</div>
+        <div class="ph-sub">Model C &middot; est. 1921 &middot; keep scrolling to keep dialing</div>
+      </div>
+    </div>
+
+    <div class="dial-row">
+      <div class="dial-wrap" id="dial-wrap">
+        <svg class="dial-plate" id="dial-plate" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="96" fill="#1c1c1c" stroke="#3a3a3a" stroke-width="3"/>
+          <circle cx="100" cy="100" r="30" fill="#2b2b2b" stroke="#444" stroke-width="2"/>
+          <g id="dial-holes" fill="#efe6d2" font-family="IBM Plex Mono, monospace" font-size="13" text-anchor="middle"></g>
+        </svg>
+        <div class="dial-center-label">
+          <div class="dial-pct" id="dial-pct">0%</div>
+          <div class="dial-caption">dialed</div>
+        </div>
+      </div>
+      <div class="dial-side">
+        <select class="lang-select" id="lang-select" onchange="onLangChange()"></select>
+        <div class="dial-hint" id="lang-hint">Detected language: —. Translation unavailable. You're reading English. You already knew that.</div>
+        <div class="dial-hint" id="timer-hint" style="margin-top:6px; color:#e3a23c;">Minimum read time: 0:15 remaining</div>
+        <div class="dial-hint" style="margin-top:6px;">Go on, grab the dial. It'll still spring back to your real progress.</div>
+      </div>
+    </div>
+
+    <div class="terms-panel" id="terms-panel" onscroll="onTermsScroll()">
+      <h4>1. The essentials</h4>
+      <p>By downloading Essential+, you agree to receive four (4) small apps that do roughly what they say and nothing else. No account is required. No account is offered. There is nothing to sync, because there is nothing worth syncing.</p>
+
+      <h4>2. Honesty clause</h4>
+      <p>Some numbers displayed by these apps are not accurate. Some times are invented. At least one alarm will never sound. This is disclosed here, once, in a box you are currently scrolling past.</p>
+
+      <div class="insult">Bruh. You're at least twenty-something, you went to school, you can read just fine — and you're still not reading this. We know. We wrote it anyway, and you're still scrolling, so: respect, honestly.</div>
+
+      <h4>3. No warranty, expressed or implied</h4>
+      <p>NTHG is provided "as is," which is legal language for "we're not bringing back the flashlight." Use of the Calculator for actual math is discouraged. Use of the Calendar to remember anything important is discouraged. Use of Click Me. Please. for personal growth is, unfortunately, also discouraged.</p>
+
+      <h4>4. Data</h4>
+      <p>We don't collect your data. We don't have a server. This whole thing runs in your browser and forgets everything the moment you close the tab, much like you will forget most of this paragraph.</p>
+
+      <h4>5. Language selection</h4>
+      <p>You may select a different language above. It will not change anything, because we only wrote this once, and reading it twice felt unnecessary for everyone involved, especially you.</p>
+
+      <div class="insult">Seriously — you finished a whole scroll of legal-shaped text without a flashlight app in sight. Somewhere, a real terms-of-service document is thrilled it's not you today.</div>
+
+      <h4>6. Governing law</h4>
+      <p>These terms are governed by the laws of whichever jurisdiction is least likely to ever hear about this. Disputes shall be settled by whoever has the working calculator.</p>
+
+      <h4>7. Acceptance</h4>
+      <p>You've reached the bottom. Both buttons below are now willing to be clicked. Choose Try for free to proceed to the interface, or Disagree to go back outside and never think about any of this again.</p>
+    </div>
+
+    <div class="phone-modal-actions" id="modal-actions">
+      <div class="progress-note" id="progress-note">Scroll the terms above to unlock a decision.</div>
+      <div class="btn-row">
+        <button class="btn-disagree" id="btn-disagree" onclick="onDisagree()" disabled>Disagree</button>
+        <button class="btn-agree" id="btn-agree" onclick="onAgree()" disabled>Try for free</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---------- ROTARY DIAL BUILDER & LOGIC ---------- */
+const DIAL_ORDER = [1,2,3,4,5,6,7,8,9,0];
+function buildDial(){
+  const g = document.getElementById('dial-holes');
+  const cx = 100, cy = 100, r = 64;
+  const startAngle = -96;
+  const step = 360 / DIAL_ORDER.length;
+  DIAL_ORDER.forEach((num, i) => {
+    const angle = (startAngle + i * step) * Math.PI / 180;
+    const hx = cx + r * Math.cos(angle);
+    const hy = cy + r * Math.sin(angle);
+    const hole = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    hole.setAttribute('cx', hx);
+    hole.setAttribute('cy', hy);
+    hole.setAttribute('r', 13);
+    hole.setAttribute('fill', '#efe6d2');
+    hole.setAttribute('stroke', '#0000');
+    g.appendChild(hole);
+    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    label.setAttribute('x', hx);
+    label.setAttribute('y', hy + 4);
+    label.setAttribute('fill', '#2b2b2b');
+    label.textContent = num;
+    g.appendChild(label);
+  });
+}
+buildDial();
+
+/* Build Calculator Opus 1921 Model C Rotary Number Pad */
+const CALC_DIAL_NUMBERS = [1, 2, 3, 4, 5, 6, 7, 8, 9, 0];
+function buildCalcRotaryDial() {
+  const plate = document.getElementById('calcDialPlate');
+  const cx = 110, cy = 110, r = 74;
+  const startAngle = 130; 
+  const totalAngleSpan = 230;
+  const step = totalAngleSpan / (CALC_DIAL_NUMBERS.length - 1);
+
+  CALC_DIAL_NUMBERS.forEach((num, i) => {
+    const angleDeg = startAngle + (i * step);
+    const angleRad = angleDeg * Math.PI / 180;
+    const hx = cx + r * Math.cos(angleRad);
+    const hy = cy + r * Math.sin(angleRad);
+
+    const holeEl = document.createElement('div');
+    holeEl.className = 'opus-dial-hole';
+    holeEl.style.left = `${hx}px`;
+    holeEl.style.top = `${hy}px`;
+    holeEl.textContent = num;
+    holeEl.dataset.num = num;
+    holeEl.dataset.baseAngle = angleDeg;
+
+    initCalcDialInteraction(holeEl, num, angleDeg);
+    plate.appendChild(holeEl);
+  });
+}
+
+function initCalcDialInteraction(el, digit, baseAngle) {
+  let isDragging = false;
+  let startX = 0, startY = 0;
+
+  el.addEventListener('pointerdown', (e) => {
+    isDragging = true;
+    el.setPointerCapture(e.pointerId);
+    startX = e.clientX;
+    startY = e.clientY;
+    e.stopPropagation();
+  });
+
+  el.addEventListener('pointermove', (e) => {
+    if (!isDragging) return;
+    const plateRect = document.getElementById('calcDialPlate').getBoundingClientRect();
+    const plateCx = plateRect.left + plateRect.width / 2;
+    const plateCy = plateRect.top + plateRect.height / 2;
+    const currentAngle = Math.atan2(e.clientY - plateCy, e.clientX - plateCx) * 180 / Math.PI;
+    
+    let rot = currentAngle - baseAngle;
+    if (rot > 0) rot = 0;
+    if (rot < -240) rot = -240;
+    
+    document.getElementById('calcDialPlate').style.transform = `rotate(${rot}deg)`;
+  });
+
+  const release = (e) => {
+    if (!isDragging) return;
+    isDragging = false;
+    
+    const plate = document.getElementById('calcDialPlate');
+    plate.style.transition = 'transform 0.4s cubic-bezier(.22,1.4,.36,1)';
+    plate.style.transform = 'rotate(0deg)';
+    
+    calcAdd(String(digit));
+
+    setTimeout(() => {
+      plate.style.transition = 'none';
+    }, 420);
+  };
+
+  el.addEventListener('pointerup', release);
+  el.addEventListener('pointercancel', release);
+}
+buildCalcRotaryDial();
+
+const LANGS = ["English (US)", "English (UK)", "Malayalam", "Hindi", "French", "Klingon", "Pig Latin", "Morse Code", "Interpretive Dance"];
+function setupLanguage(){
+  const sel = document.getElementById('lang-select');
+  sel.innerHTML = '';
+  LANGS.forEach(l => {
+    const opt = document.createElement('option');
+    opt.value = l; opt.textContent = l;
+    sel.appendChild(opt);
+  });
+  sel.selectedIndex = Math.floor(Math.random() * LANGS.length);
+  updateLangHint();
+}
+function onLangChange(){ updateLangHint(); }
+function updateLangHint(){
+  const val = document.getElementById('lang-select').value;
+  document.getElementById('lang-hint').textContent = `Detected language: ${val}. Translation unavailable. You're reading English. You already knew that.`;
+}
+
+let baseRotation = 0;
+let currentRotation = 0;
+let dragging = false;
+let lastFrac = 0;
+const MIN_READ_MS = 15000;
+let termsOpenedAt = null;
+let timerInterval = null;
+
+function openTerms(){
+  document.getElementById('terms-overlay').classList.add('show');
+  const panel = document.getElementById('terms-panel');
+  panel.scrollTop = 0;
+  setupLanguage();
+  termsOpenedAt = Date.now();
+  clearInterval(timerInterval);
+  timerInterval = setInterval(evaluateGate, 500);
+  updateDialFromScroll();
+  lockButtons();
+}
+function onTermsScroll(){
+  updateDialFromScroll();
+}
+function applyRotation(deg){
+  document.getElementById('dial-plate').style.transform = `rotate(${deg}deg)`;
+  const frac = Math.min(1, Math.max(0, -deg / 230));
+  document.getElementById('dial-pct').textContent = Math.round(frac * 100) + '%';
+}
+function updateDialFromScroll(){
+  const panel = document.getElementById('terms-panel');
+  const max = panel.scrollHeight - panel.clientHeight;
+  const frac = max > 0 ? Math.min(1, panel.scrollTop / max) : 1;
+  lastFrac = frac;
+  baseRotation = -frac * 230;
+  if (!dragging){
+    currentRotation = baseRotation;
+    applyRotation(currentRotation);
+  }
+  evaluateGate();
+}
+function evaluateGate(){
+  const elapsed = termsOpenedAt ? Date.now() - termsOpenedAt : 0;
+  const remainingMs = Math.max(0, MIN_READ_MS - elapsed);
+  const remainingSec = Math.ceil(remainingMs / 1000);
+  const mm = Math.floor(remainingSec / 60);
+  const ss = String(remainingSec % 60).padStart(2, '0');
+  const timerEl = document.getElementById('timer-hint');
+  const scrolledEnough = lastFrac >= 0.97;
+  const timeUp = remainingMs <= 0;
+
+  if (timeUp){
+    timerEl.textContent = 'Minimum read time: satisfied.';
+    timerEl.style.color = '#8fb8ac';
+  } else {
+    timerEl.textContent = `Minimum read time: ${mm}:${ss} remaining`;
+    timerEl.style.color = '#e3a23c';
+  }
+
+  if (scrolledEnough && timeUp){
+    unlockButtons();
+    clearInterval(timerInterval);
+    document.getElementById('progress-note').textContent = 'Fully dialed. Go on, then.';
+  } else {
+    lockButtons();
+    if (!scrolledEnough && !timeUp){
+      document.getElementById('progress-note').textContent = `Keep scrolling — ${mm}:${ss} left either way.`;
+    } else if (!scrolledEnough && timeUp){
+      document.getElementById('progress-note').textContent = "Time's up. Still need to finish scrolling.";
+    } else if (scrolledEnough && !timeUp){
+      document.getElementById('progress-note').textContent = `Fully read. Still dialing... ${mm}:${ss} left.`;
+    }
+  }
+}
+
+const dialWrap = document.getElementById('dial-wrap');
+const dialPlate = document.getElementById('dial-plate');
+let dragStartPointerAngle = 0;
+let dragStartRotation = 0;
+
+function pointerAngle(e){
+  const rect = dialPlate.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  return Math.atan2(e.clientY - cy, e.clientX - cx) * 180 / Math.PI;
+}
+dialWrap.addEventListener('pointerdown', (e) => {
+  dragging = true;
+  dialWrap.classList.add('dragging');
+  dialPlate.style.transition = 'none';
+  dragStartPointerAngle = pointerAngle(e);
+  dragStartRotation = currentRotation;
+  dialWrap.setPointerCapture(e.pointerId);
+});
+dialWrap.addEventListener('pointermove', (e) => {
+  if (!dragging) return;
+  const delta = pointerAngle(e) - dragStartPointerAngle;
+  currentRotation = Math.max(-230, Math.min(15, dragStartRotation + delta));
+  applyRotation(currentRotation);
+});
+function releaseDial(){
+  if (!dragging) return;
+  dragging = false;
+  dialWrap.classList.remove('dragging');
+  dialPlate.style.transition = 'transform 0.4s cubic-bezier(.22,1.4,.36,1)';
+  currentRotation = baseRotation;
+  applyRotation(currentRotation);
+  setTimeout(() => { dialPlate.style.transition = 'none'; }, 420);
+}
+dialWrap.addEventListener('pointerup', releaseDial);
+dialWrap.addEventListener('pointercancel', releaseDial);
+
+function lockButtons(){
+  document.getElementById('btn-agree').disabled = true;
+  document.getElementById('btn-disagree').disabled = true;
+  document.getElementById('modal-actions').classList.remove('unlocked');
+}
+function unlockButtons(){
+  document.getElementById('btn-agree').disabled = false;
+  document.getElementById('btn-disagree').disabled = false;
+  document.getElementById('modal-actions').classList.add('unlocked');
+  document.getElementById('progress-note').textContent = 'Fully dialed. Go on, then.';
+}
+
+function onAgree(){
+  if (document.getElementById('btn-agree').disabled) return;
+  document.getElementById('terms-overlay').classList.remove('show');
+  document.getElementById('landing-view').style.display = 'none';
+  document.getElementById('app-suite-container').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  initGame();
+}
+function onDisagree(){
+  if (document.getElementById('btn-disagree').disabled) return;
+  clearInterval(timerInterval);
+  document.getElementById('terms-overlay').classList.remove('show');
+}
+
+
+/* ---------- APP SUITE & CALCULATOR LOGIC ---------- */
+function openView(viewId) {
+  document.getElementById('apps-grid-view').style.display = 'none';
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById(viewId).classList.add('active');
+  if(viewId === 'calendar') initCalendar();
+  if(viewId === 'game') {
+    setTimeout(placeRandom, 50);
+  }
+}
+function closeViews() {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('apps-grid-view').style.display = 'grid';
+}
+
+/* Opus 1921 Cable Model C Custom Behaviors */
+let calcExpression = "0";
+function calcAdd(val) {
+  if (calcExpression === "0" && val !== ".") {
+    calcExpression = val;
+  } else {
+    calcExpression += val;
+  }
+  document.getElementById('calcDisplay').textContent = calcExpression;
+}
+function calcClear() {
+  calcExpression = "0";
+  document.getElementById('calcDisplay').textContent = calcExpression;
+}
+
+function calcCompute() {
+  const sarcasticResponses = [
+    "idk bro, ask Google Calendar.",
+    "Look man, I'm a 1921 relay box, not your high school math teacher.",
+    "Math? In this economy? Ask Google Calendar.",
+    "That number looks entirely made up. Try checking your calendar app instead.",
+    "idk bro, ask Google Calendar. Or guess. Guessing builds character."
+  ];
+  const choice = sarcasticResponses[Math.floor(Math.random() * sarcasticResponses.length)];
+  document.getElementById('calcDisplay').textContent = choice;
+  calcExpression = "0";
+}
+
+function triggerTeleportAction(e) {
+  const btn = document.getElementById('teleportXBtn');
+  const randomX = (Math.random() - 0.5) * 160;
+  const randomY = (Math.random() - 0.5) * 60;
+  btn.style.transform = `translate(${randomX}px, ${randomY}px)`;
+}
+
+function triggerMinusAction() {
+  alert("Closing program because you clicked minus. Don't look at us like that, you asked for it.");
+  window.location.reload();
+}
+
+function triggerMaximizeAction() {}
+
+/* Calendar Logic */
+function initCalendar() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  document.getElementById('calendarMonthTitle').textContent = `${monthNames[month]} ${year}`;
+  
+  const grid = document.getElementById('calendarDatesGrid');
+  grid.innerHTML = "";
+  
+  let firstDay = new Date(year, month, 1).getDay();
+  firstDay = (firstDay === 0) ? 6 : firstDay - 1; 
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  
+  for(let i=0; i<firstDay; i++) {
+    const emptyCell = document.createElement('div');
+    emptyCell.className = 'date-cell';
+    grid.appendChild(emptyCell);
+  }
+  
+  for(let d=1; d<=daysInMonth; d++) {
+    const cell = document.createElement('div');
+    cell.className = 'date-cell';
+    if(d === now.getDate()) cell.classList.add('today');
+    cell.textContent = d;
+    grid.appendChild(cell);
+  }
+}
+
+/* Clock Logic (Perpetual Almost) */
+function toRoman(num) {
+    if (num === 0) return "Nulla";
+    const lookup = {M:1000,CM:900,D:500,CD:400,C:100,XC:90,L:50,XL:40,X:10,IX:9,V:5,IV:4,I:1};
+    let roman = "";
+    for (let i in lookup) {
+        while (num >= lookup[i]) {
+            roman += i;
+            num -= lookup[i];
+        }
+    }
+    return roman;
+}
+
+function updateClock() {
+    const display = document.getElementById('timeDisplay');
+    if (!display) return;
+    const mode = Math.floor(Math.random() * 3);
+
+    if (mode === 0) {
+        const hr = String(Math.floor(Math.random() * 24)).padStart(2, '0');
+        const min = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+        const sec = String(Math.floor(Math.random() * 60)).padStart(2, '0');
+        display.innerText = `${hr}:${min}:${sec}`;
+    } else if (mode === 1) {
+        display.innerText = `UTC+${Math.floor(Math.random() * 26) - 13}:${Math.floor(Math.random() * 60)}`;
+    } else {
+        const rHr = toRoman(Math.floor(Math.random() * 12) + 1);
+        const rMin = toRoman(Math.floor(Math.random() * 60));
+        display.innerText = `${rHr}:${rMin}`;
+    }
+}
+setInterval(updateClock, 1500);
+
+function setAlarm() {
+    const val = document.getElementById('alarmInput').value;
+    const status = document.getElementById('alarmStatus');
+    status.innerText = `Alarm set for ${val}. (Maximum Silence Ensured)`;
+    
+    setTimeout(() => {
+        if (status.innerText.includes(val)) {
+            status.innerText = `Alarm time passed quietly.`;
+        }
+    }, 5000);
+}
+
+let countdownInterval = null;
+function validateCountdown() {
+    const input = document.getElementById('timerInput');
+    const error = document.getElementById('timerError');
+    
+    if (input.value > 9999) {
+        error.innerText = "Error: Max limit is 9999 seconds.";
+        input.value = 9999;
+    } else {
+        error.innerText = "";
+    }
+}
+
+function startTimer() {
+    clearInterval(countdownInterval);
+    const inputVal = parseInt(document.getElementById('timerInput').value);
+    const timerDisplay = document.getElementById('timerDisplay');
+    const error = document.getElementById('timerError');
+
+    if (isNaN(inputVal) || inputVal <= 0) {
+        error.innerText = "Enter a valid positive number.";
+        return;
+    }
+
+    let remainingSeconds = inputVal;
+    timerDisplay.innerText = `Timer: ${String(remainingSeconds).padStart(4, '0')}s`;
+
+    countdownInterval = setInterval(() => {
+        remainingSeconds--;
+        let formattedDigits = String(Math.max(0, remainingSeconds)).padStart(4, '0');
+
+        if (remainingSeconds <= 0) {
+            timerDisplay.innerText = `Timer: ${formattedDigits}s (Time's Up)`;
+            clearInterval(countdownInterval);
+        } else {
+            timerDisplay.innerText = `Timer: ${formattedDigits}s (Counting Down)`;
+        }
+    }, 1000);
+}
+
+/* Click Me. Please. Game Logic */
+const gameBtn = document.getElementById('btn');
+const arena = document.getElementById('arena');
+const attemptsEl = document.getElementById('attempts');
+const rageEl = document.getElementById('rage');
+const timerEl = document.getElementById('timer');
+const caughtScreen = document.getElementById('caught');
+const caughtStats = document.getElementById('caughtStats');
+
+let attempts = 0;
+let rage = 0;
+let startTime = Date.now();
+let btnW = 0, btnH = 0;
+let caught = false;
+const taunts = ["are u fr bruh 💀", "too slow 🐌", "siuuu ⚽🔥", "step over! 🕺", "nutmegged 😭", "ha 😂", "missed me 👋", "vamos 🙌", "olé 🎩", "nah fam 🚫", "get rekt 💯", "not today 🙅", "skill issue 🤡", "L take 📉"];
+
+function updateSize() {
+  const rect = gameBtn.getBoundingClientRect();
+  btnW = rect.width || 100;
+  btnH = rect.height || 50;
+}
+
+function placeRandom() {
+  updateSize();
+  const arenaRect = arena.getBoundingClientRect();
+  const maxX = arenaRect.width - btnW - 20;
+  const maxY = arenaRect.height - btnH - 20;
+  const x = 20 + Math.random() * Math.max(maxX - 20, 10);
+  const y = 130 + Math.random() * Math.max(maxY - 130, 10);
+  gameBtn.style.left = x + 'px';
+  gameBtn.style.top = y + 'px';
+}
+
+let dodging = false;
+
+function dodge(fromX, fromY) {
+  if (dodging) return;
+  dodging = true;
+  updateSize();
+  const rect = gameBtn.getBoundingClientRect();
+  const arenaRect = arena.getBoundingClientRect();
+  const cx = rect.left - arenaRect.left + btnW / 2;
+  const cy = rect.top - arenaRect.top + btnH / 2;
+
+  let dx = cx - (fromX - arenaRect.left);
+  let dy = cy - (fromY - arenaRect.top);
+  let dist = Math.sqrt(dx * dx + dy * dy) || 1;
+  dx /= dist; dy /= dist;
+
+  const px = -dy, py = dx;
+  const fakeDir = Math.random() < 0.5 ? 1 : -1;
+
+  gameBtn.classList.remove('feint');
+  gameBtn.classList.add('feint');
+  const fakeDist = 30 + Math.random() * 35;
+  let fakeX = (rect.left - arenaRect.left) + px * fakeDir * fakeDist - dx * 10;
+  let fakeY = (rect.top - arenaRect.top) + py * fakeDir * fakeDist - dy * 10;
+  fakeX = Math.max(10, Math.min(arenaRect.width - btnW - 10, fakeX));
+  fakeY = Math.max(100, Math.min(arenaRect.height - btnH - 10, fakeY));
+  gameBtn.style.left = fakeX + 'px';
+  gameBtn.style.top = fakeY + 'px';
+
+  setTimeout(() => {
+    gameBtn.classList.remove('feint');
+    const jitter = (Math.random() - 0.5) * 0.9;
+    let ddx = dx + jitter;
+    let ddy = dy + (Math.random() - 0.5) * 0.9;
+
+    const moveDist = 200 + Math.min(rage * 20, 500) + Math.random() * 200;
+
+    let newX = fakeX + ddx * moveDist;
+    let newY = fakeY + ddy * moveDist;
+
+    newX = Math.max(10, Math.min(arenaRect.width - btnW - 10, newX));
+    newY = Math.max(100, Math.min(arenaRect.height - btnH - 10, newY));
+
+    gameBtn.style.left = newX + 'px';
+    gameBtn.style.top = newY + 'px';
+    dodging = false;
+  }, 28);
+}
+
+function bumpRage() {
+  rage++;
+  rageEl.textContent = rage;
+  if (rage > 8) gameBtn.classList.add('rage');
+  const scale = Math.max(0.55, 1 - rage * 0.02);
+  gameBtn.style.fontSize = (17 * scale) + 'px';
+  gameBtn.style.padding = (18 * scale) + 'px ' + (34 * scale) + 'px';
+}
+
+let lastTauntTime = 0;
+
+function spawnTaunt(x, y) {
+  const now = Date.now();
+  if (now - lastTauntTime < 3000) return;
+  lastTauntTime = now;
+  const t = document.createElement('div');
+  t.className = 'taunt';
+  t.style.left = '30px';
+  t.style.bottom = '30px';
+  arena.appendChild(t);
+  t.textContent = taunts[Math.floor(Math.random() * taunts.length)];
+  setTimeout(() => t.remove(), 1600);
+}
+
+const DODGE_RADIUS = 140;
+
+function onPointerMove(e) {
+  if (caught) return;
+  const rect = gameBtn.getBoundingClientRect();
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  const dist = Math.hypot(e.clientX - cx, e.clientY - cy);
+  if (dist < DODGE_RADIUS) {
+    dodge(e.clientX, e.clientY);
+    bumpRage();
+    spawnTaunt(e.clientX, e.clientY - 20);
+  }
+}
+
+arena.addEventListener('mousemove', onPointerMove);
+arena.addEventListener('touchmove', (e) => {
+  if (e.touches && e.touches[0]) {
+    onPointerMove({ clientX: e.touches[0].clientX, clientY: e.touches[0].clientY });
+  }
+}, { passive: true });
+
+gameBtn.addEventListener('mouseenter', () => {
+  if (caught) return;
+  attempts++;
+  attemptsEl.textContent = attempts;
+});
+
+gameBtn.addEventListener('click', () => {
+  caught = true;
+  const elapsed = Math.floor((Date.now() - startTime) / 1000);
+  caughtStats.textContent = `${attempts} attempts, ${rage} dodges endured, ${elapsed}s wasted. Impressive, honestly.`;
+  caughtScreen.style.display = 'flex';
+});
+
+function resetGame() {
+  attempts = 0;
+  rage = 0;
+  startTime = Date.now();
+  caught = false;
+  gameBtn.classList.remove('rage');
+  gameBtn.style.fontSize = '17px';
+  gameBtn.style.padding = '18px 34px';
+  attemptsEl.textContent = 0;
+  rageEl.textContent = 0;
+  caughtScreen.style.display = 'none';
+  placeRandom();
+}
+
+setInterval(() => {
+  if (!caught && document.getElementById('game').classList.contains('active')) {
+    timerEl.textContent = Math.floor((Date.now() - startTime) / 1000) + 's';
+  }
+}, 500);
+
+function initGame() {
+  startTime = Date.now();
+  placeRandom();
+}
+
+window.addEventListener('resize', () => {
+  if(document.getElementById('game').classList.contains('active')) {
+    placeRandom();
+  }
+});
+</script>
+</body>
+</html>
