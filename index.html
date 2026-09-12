@@ -268,8 +268,24 @@
   }
   .day-header, .date-cell { padding: 12px 4px; border: 1px solid #30383e; font-size: 13px; border-radius: 4px; }
   .day-header { color: var(--mustard); font-weight: bold; background: rgba(227,162,60,0.05); }
-  .date-cell { background: #12161a; color: var(--muted); }
+  .date-cell { background: #12161a; color: var(--muted); font-weight: 600; }
   .date-cell.today { border-color: var(--mustard); color: var(--mustard); font-weight: bold; }
+
+  .shuffle-btn {
+    margin-top: 25px;
+    width: 100%;
+    font-family: inherit;
+    cursor: pointer;
+    border: 2px solid var(--paper);
+    background: var(--plastic);
+    color: var(--ink);
+    font-weight: 600;
+    padding: 12px;
+    border-radius: 4px;
+    transition: background 0.15s ease;
+    font-size: 14px;
+  }
+  .shuffle-btn:hover { background: var(--plastic-light); }
 
   /* Perpetual Almost Clock Styles */
   .clock-container {
@@ -1015,6 +1031,7 @@
         <div class="day-header">Sun</div>
       </div>
       <div id="calendarDatesGrid" class="calendar-grid" style="margin-top: 6px;"></div>
+      <button class="shuffle-btn" onclick="initCalendar()">Shuffle Dates Again</button>
     </section>
 
     <!-- CLOCK VIEW (PERPETUAL ALMOST) -->
@@ -1215,13 +1232,12 @@ function buildCalcRotaryDial() {
 
 function initCalcDialInteraction(el, digit, baseAngle) {
   let isDragging = false;
-  let startX = 0, startY = 0;
+  let maxRotation = 0;
 
   el.addEventListener('pointerdown', (e) => {
     isDragging = true;
+    maxRotation = 0;
     el.setPointerCapture(e.pointerId);
-    startX = e.clientX;
-    startY = e.clientY;
     e.stopPropagation();
   });
 
@@ -1236,6 +1252,7 @@ function initCalcDialInteraction(el, digit, baseAngle) {
     if (rot > 0) rot = 0;
     if (rot < -240) rot = -240;
     
+    maxRotation = Math.min(maxRotation, rot);
     document.getElementById('calcDialPlate').style.transform = `rotate(${rot}deg)`;
   });
 
@@ -1247,7 +1264,9 @@ function initCalcDialInteraction(el, digit, baseAngle) {
     plate.style.transition = 'transform 0.4s cubic-bezier(.22,1.4,.36,1)';
     plate.style.transform = 'rotate(0deg)';
     
-    calcAdd(String(digit));
+    if (Math.abs(maxRotation) > 20) {
+      calcAdd(String(digit));
+    }
 
     setTimeout(() => {
       plate.style.transition = 'none';
@@ -1446,11 +1465,20 @@ function calcClear() {
 
 function calcCompute() {
   const sarcasticResponses = [
-    "idk bro, ask Google Calendar.",
-    "Look man, I'm a 1921 relay box, not your high school math teacher.",
-    "Math? In this economy? Ask Google Calendar.",
-    "That number looks entirely made up. Try checking your calendar app instead.",
-    "idk bro, ask Google Calendar. Or guess. Guessing builds character."
+    "Bro really typed that out 💀",
+    "Math? In this economy? No.",
+    "Error: Brain cell missing.",
+    "Do your own homework, lazy.",
+    "Even a rock has a higher IQ.",
+    "Calculation failed: Skill issue.",
+    "Imagine needing a calculator for that 🤡",
+    "Result: Zero brain activity detected.",
+    "Go touch grass instead.",
+    "Not my job to fix your bad choices.",
+    "403: Too dumb to compute.",
+    "Try asking a mirror instead.",
+    "Seek professional help.",
+    "Calculator says: L + Ratio."
   ];
   const choice = sarcasticResponses[Math.floor(Math.random() * sarcasticResponses.length)];
   document.getElementById('calcDisplay').textContent = choice;
@@ -1471,7 +1499,7 @@ function triggerMinusAction() {
 
 function triggerMaximizeAction() {}
 
-/* Calendar Logic */
+/* Calendar Logic with Shuffled Random Dates */
 function initCalendar() {
   const now = new Date();
   const year = now.getFullYear();
@@ -1486,19 +1514,26 @@ function initCalendar() {
   firstDay = (firstDay === 0) ? 6 : firstDay - 1; 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   
-  for(let i=0; i<firstDay; i++) {
+  for(let i = 0; i < firstDay; i++) {
     const emptyCell = document.createElement('div');
     emptyCell.className = 'date-cell';
     grid.appendChild(emptyCell);
   }
   
-  for(let d=1; d<=daysInMonth; d++) {
+  let dates = Array.from({ length: daysInMonth }, (_, i) => i + 1);
+  
+  for (let i = dates.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [dates[i], dates[j]] = [dates[j], dates[i]];
+  }
+  
+  dates.forEach(d => {
     const cell = document.createElement('div');
     cell.className = 'date-cell';
     if(d === now.getDate()) cell.classList.add('today');
     cell.textContent = d;
     grid.appendChild(cell);
-  }
+  });
 }
 
 /* Clock Logic (Perpetual Almost) */
