@@ -35,12 +35,7 @@ For Software:
 
 ### Implementation
 For Software:
-# Installation
-[commands]
-
-# Run
-[commands]
-
+VScode,github,vercel
 ### Project Documentation
 For Software:
 
@@ -58,14 +53,28 @@ For Software:
 *This page allows the user to access the above apps and have fun*
 
 # Diagrams
-<img width="1917" height="907" alt="Screenshot1" src="https://github.com/user-attachments/assets/ceb988db-417f-4078-919a-05a32fefef1f" />
+<img width="1180" height="709" alt="workflow" src="https://github.com/user-attachments/assets/209322f4-1046-4bed-904e-49ed17f2ec58" />
+
 
 *Entry Point: Users land on the NTHG overview page featuring features and release notes.  Gated Access: Clicking download initiates the quirky rotary dial and reading timer modal (#terms-overlay), requiring full interaction before unlocking the interface.  Main Dashboard: Once unlocked, users enter the core suite containing the four primary apps (Calculator, Calendar, Clock, and the Click Me. Please. challenge)*
 
 ### Project Demo
 # Video
-[Add your demo video link here]
-*Explain what the video demonstrates*
+
+
+https://github.com/user-attachments/assets/af7d8e9e-a7c3-4899-9a8e-5ae8cd405f08
+
+*This video demonstrates NTHG Essentials, a satirical, intentionally dysfunctional web app featuring a collection of four everyday utilities:
+
+Terms & Conditions Gatekeeping (0:00 - 0:19): Clicking "Download" or "Try For Free" triggers an "Essential Terms & Conditions" modal requiring the user to scroll through terms while completing interactive mini-tasks like an "Interpretive Dance" timer or selecting absurd language options before unlocking the app suite.
+
+Calculator (0:20 - 0:46): Modeled after an outdated rotary input dial ("Opus 1921 Cable Model C"), attempting basic math yields unhelpful responses like "Seek professional help.", "ERROR: Brain cell missing.", or "Go touch grass instead."
+
+Calendar (0:47 - 0:55): Displays dates out of chronological sequence with a prominent "Shuffle Dates Again" button to scramble the grid further.
+
+Clock (0:56 - 1:14): Features shifting time zones, Roman numerals, rapidly changing display formats, and a "Mute Alarm" function that explicitly states "Maximum silence ensured".
+
+Click Me. Please. (1:15 - 1:35): A game featuring a moving button that actively evades cursor clicks while tracking attempts, elapsed time, and escalating "Rage Level" metrics alongside taunt messages.*
 
 # Additional Demos
 https://nthg-iipe.vercel.app/
